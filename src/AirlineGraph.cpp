@@ -6,8 +6,12 @@ AirlineGraph::AirlineGraph()
     LoadAirline();
    // ShowAirlineGraph();
     //WriteAirlineJson();
-    Properline("杭州","长春");
-    cout<<timetransform("08:00");
+   // Properline("杭州","长春");
+ //  SortByPrice("杭州","长春");
+     cout<<timetransform("08:00");
+ //   ShowBestAirline();
+  // SearchCheapest("北京","长春");
+
 
 }
 
@@ -107,7 +111,20 @@ Airport* AirlineGraph::FindAirportByName(string name)
     }
     return NULL;
 }
+//通过机场编号查找
+Airport* AirlineGraph::FindAirportByNo(int number)
+{
+    for(int i=0;i<mAirportNumber;i++)
+    {
+        if(mAirportHeadArray[i]->No==number)
+        {
 
+          //  cout<<mAirportHeadArray[i]->mAirportName;
+            return mAirportHeadArray[i];
+        }
+    }
+    return NULL;
+}
 void AirlineGraph::InsertAirlineGraph(Airport* airport,Airline* airline)
 //插入航班 创建时调用
 {
@@ -445,7 +462,7 @@ void AirlineGraph::SearchByPrice(int price1,int price2,string name1,string name2
     }
 }
 //按时间搜索
-void AirlineGraph::SearchByTime(string time1,string time2,string name1,string name2)//按时间查找
+void AirlineGraph::SearchByTime(string time1,string time2,string city1,string city2)//按时间查找
 {
     vector<Airline*> Count;
     vector<Airline*>::iterator iter=Count.begin();
@@ -457,7 +474,7 @@ void AirlineGraph::SearchByTime(string time1,string time2,string name1,string na
         while(airline!=NULL)
         {
             airline->transformtime=timetransform(airline->mDepartureTime);
-            if(airline->mDepartureCity==name1&&airline->mArrivalCity==name2)
+            if(airline->mDepartureCity==city1&&airline->mArrivalCity==city2)
             {
                 Count.push_back(airline);
             }
@@ -488,9 +505,8 @@ void AirlineGraph::SearchByTime(string time1,string time2,string name1,string na
         }
     }
 }
-
 //按时间排序
-void AirlineGraph::SortByTime(string name1,string name2)
+void AirlineGraph::SortByTime(string city1,string city2)
 {
     vector<Airline*> Count;
     vector<Airline*>::iterator iter=Count.begin();
@@ -502,7 +518,7 @@ void AirlineGraph::SortByTime(string name1,string name2)
         while(airline!=NULL)
         {
             airline->transformtime=timetransform(airline->mDepartureTime);
-            if(airline->mDepartureCity==name1&&airline->mArrivalCity==name2)
+            if(airline->mDepartureCity==city1&&airline->mArrivalCity==city2)
             {
                 Count.push_back(airline);
             }
@@ -555,6 +571,8 @@ void AirlineGraph::Search(string city1,string city2)
     {
         for(vector<Airline*>::iterator m = Count.begin(); m != Count.end(); m++ )    //用迭代器的方式输出容器对象的值
         {
+            if((*m)->flag!=1)
+            {
                 cout<<"航班号:"<<(*m)->mAirlineName<<endl;
                 cout<<"公司:"<<(*m)->mCompany<<endl;
                 cout<<"起始城市:"<<(*m)->mDepartureCity<<endl;
@@ -570,6 +588,7 @@ void AirlineGraph::Search(string city1,string city2)
                 cout<<"当前人数:"<<(*m)->mCurrentNumber<<endl;
                 (*m)->flag==1;
             }
+        }
         }
 }
 
@@ -607,7 +626,7 @@ void AirlineGraph::Unsubscribe(BookOrder* bookOrder)
 }
 
 //按价格排序
-void AirlineGraph::SortByPrice(string name1,string name2)
+void AirlineGraph::SortByPrice(string city1,string city2)
 {
     vector<Airline*> Count;
     vector<Airline*>::iterator iter=Count.begin();
@@ -618,40 +637,43 @@ void AirlineGraph::SortByPrice(string name1,string name2)
         Airline* airline=airport->mAdjAirline;
         while(airline!=NULL)
         {
-            if(airline->mDepartureCity==name1&&airline->mArrivalCity==name2)
+            if(airline->mDepartureCity==city1&&airline->mArrivalCity==city1)
             {
                 Count.push_back(airline);
             }
             airline=airline->mNextAirline;
         }
     }
-    for(int i=0; i<3030; i++)
+    for(int i=0; i<4000;i++)
     {
         for(vector<Airline*>::iterator m = Count.begin(); m != Count.end(); m++ )    //用迭代器的方式输出容器对象的值
         {
-            if((*m)->transformtime==i&&((*m)->flag==0))
+            if((*m)->mPrice==i&&((*m)->flag==0))
             {
-                cout<<"航班号:"<<(*m)->mAirlineName<<endl;
-                cout<<"公司:"<<(*m)->mCompany<<endl;
-                cout<<"起始城市:"<<(*m)->mDepartureCity<<endl;
-                cout<<"起飞机场:"<<(*m)->mDepartureAirport<<endl;
-                cout<<"到达城市:"<<(*m)->mArrivalCity<<endl;
-                cout<<"到达机场:"<<(*m)->mArrivalAirport<<endl;
-                cout<<"起飞时间:"<<(*m)->mDepartureTime<<endl;
-                cout<<"到达时间:"<<(*m)->mArrivalTime<<endl;
-                cout<<"机型:"<<(*m)->mAirplaneModel<<endl;
-                cout<<"价格:"<<(*m)->mPrice<<endl;
-                cout<<"最大折扣:"<<(*m)->mIntDiscount<<endl;
-                cout<<"满载:"<<(*m)->mCapacity<<endl;
+                cout<<"航班号:"<<(*m)->mAirlineName;
+                cout<<"公司:"<<(*m)->mCompany;
+                cout<<"起始城市:"<<(*m)->mDepartureCity;
+                cout<<"起飞机场:"<<(*m)->mDepartureAirport;
+                cout<<"到达城市:"<<(*m)->mArrivalCity;
+                cout<<"到达机场:"<<(*m)->mArrivalAirport;
+                cout<<"起飞时间:"<<(*m)->mDepartureTime;
+                cout<<"到达时间:"<<(*m)->mArrivalTime;
+                cout<<"机型:"<<(*m)->mAirplaneModel;
+                cout<<"价格:"<<(*m)->mPrice;
+                cout<<"最大折扣:"<<(*m)->mIntDiscount;
+                cout<<"满载:"<<(*m)->mCapacity;
                 cout<<"当前人数:"<<(*m)->mCurrentNumber<<endl;
                 (*m)->flag==1;
             }
         }
     }
 }
+
+//输入两个城市名称，可以根据条件设计这两座城市之间可能的线路，进而推荐合理线路；
 void AirlineGraph::Properline(string city1,string city2)
 {
-    //Search(city1,city2);
+    cout<<"直达方案："<<endl;
+    SortByPrice(city1,city2);
     Airport* airport=FindAirportByCity(city1);
     if(airport!=NULL)
     {
@@ -660,28 +682,10 @@ void AirlineGraph::Properline(string city1,string city2)
         {
             while(airline->mArrivalCity==city2)
             {
-                /* cout<<"直达方案："<<endl;
-                 cout<<setw(10)<<airline->mAirlineName;
-                 cout<<setw(25)<<airline->mCompany;
-                 cout<<setw(10)<<airline->mDepartureCity;
-                 cout<<setw(20)<<airline->mDepartureAirport;
-                 cout<<setw(10)<<airline->mArrivalCity;
-                 cout<<setw(20)<<airline->mArrivalAirport;
-                 cout<<setw(10)<<airline->mDepartureTime;
-                 cout<<setw(10)<<airline->mArrivalTime;
-                 cout<<setw(8)<<airline->mAirplaneModel;
-                 cout<<setw(8)<<airline->mPrice;
-                 cout<<setw(8)<<airline->mIntDiscount/1000.0;
-                 cout<<setw(9)<<airline->mPrice*(1-airline->mIntDiscount/1000.0);
-                 cout<<setw(8)<<airline->mCapacity;
-                 cout<<setw(8)<<airline->mCurrentNumber;
-                 cout<<setw(8)<<airline->mCapacity-airline->mCurrentNumber;
-                 cout<<endl;*/
                 airline=airline->mNextAirline;
             }
             string transfercity = airline->mArrivalCity;          //中转机场
             Airport* transfer = FindAirportByCity(transfercity);     //
-            cout<<transfer;
             if(transfer!=NULL)
             {
                 Airline* airlines = transfer->mAdjAirline;
@@ -689,7 +693,7 @@ void AirlineGraph::Properline(string city1,string city2)
                 {
                     if(airlines->mArrivalCity==city2&&((timetransform(airline->mArrivalTime))<(timetransform(airlines->mDepartureTime))))
                     {
-                        cout<<"中转方案"<<endl;
+                        cout<<"中转方案:"<<endl;
                         cout<<setw(10)<<airline->mAirlineName;
                         cout<<setw(25)<<airline->mCompany;
                         cout<<setw(10)<<airline->mDepartureCity;
@@ -704,7 +708,6 @@ void AirlineGraph::Properline(string city1,string city2)
                         cout<<setw(9)<<airline->mPrice*(1-airline->mIntDiscount/1000.0);
                         cout<<setw(8)<<airline->mCapacity;
                         cout<<setw(8)<<airline->mCurrentNumber;
-                        cout<<setw(8)<<airline->mCapacity-airline->mCurrentNumber;
                         cout<<endl;
                         cout<<setw(10)<<airlines->mAirlineName;
                         cout<<setw(25)<<airlines->mCompany;
@@ -720,7 +723,6 @@ void AirlineGraph::Properline(string city1,string city2)
                         cout<<setw(9)<<airlines->mPrice*(1-airline->mIntDiscount/1000.0);
                         cout<<setw(8)<<airlines->mCapacity;
                         cout<<setw(8)<<airlines->mCurrentNumber;
-                        cout<<setw(8)<<airlines->mCapacity-airline->mCurrentNumber;
                         cout<<endl;
                     }
                     airlines = airlines->mNextAirline;
@@ -731,3 +733,19 @@ void AirlineGraph::Properline(string city1,string city2)
         }
     }
 }
+void AirlineGraph::ShowBestAirline()
+{
+    int AirlineGraph[mAirportNumber][mAirportNumber];
+    cout<<mAirportNumber<<AirlineGraph[100][100]<<endl;
+    for(int i = 0;i<mAirportNumber;i++)
+    {
+        Airport* airport_i = mAirportHeadArray[i];
+        for(int j = 0;j<mAirportNumber;j++)
+        {
+            Airport* airport_j = mAirportHeadArray[j];
+           // cout<<airport_j->mAirportName;
+            SortByPrice(airport_i->mLocation,airport_j->mLocation);
+        }
+    }
+}
+
