@@ -1,3 +1,4 @@
+
 #include "System.h"
 
 System::System()
@@ -73,6 +74,7 @@ void System::InsertAirlineInfo()
     if(mAirlineGraph->FindAirlineByName(airline->mAirlineName)!=NULL)
     {
         cout<<"已存在该航班！"<<endl;
+
         return;
     }
     cout<<"请输入起飞时间："<<endl;
@@ -651,6 +653,7 @@ void System::MenuDaemon()
         ShowMenu(0);
         cin>>operation;
     }
+
 }
 
 void System::ShowMenu(int i)
