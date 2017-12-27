@@ -2,15 +2,14 @@
 
 System::System()
 {
+    cout.setf(ios::left);
+    ShowWelcome();
     mAirlineGraph=new AirlineGraph();
+    cout<<endl<<"机场航线数据加载完毕……"<<endl;
     mBookOrderVector=NULL;
     LoadBookOrder();
-    /*ofstream outfile;
-    outfile.open("Airline.json");
-    Array jsonArray=GenerateAirlineJson();
-    cout<<jsonArray.json();
-    outfile<<jsonArray.json();
-    outfile.close();*/
+    cout<<"订单数据加载完毕……"<<endl;
+    MenuDaemon();
 }
 
 System::~System()
@@ -18,11 +17,21 @@ System::~System()
     //dtor
 }
 
+void System::ShowWelcome()
+{
+    cout<<"欢迎使用机票预定系统！"<<endl;
+    time_t timep;
+    time (&timep);
+    char timestr[64];
+    strftime(timestr, sizeof(timestr), "%Y-%m-%d %H:%M:%S",localtime(&timep));
+    cout<<"登录时间："<<timestr<<endl;
+}
+
 void System::LoadBookOrder()
 {
     ifstream infile;
     string s;
-    infile.open("Book.json");
+    infile.open("data/Book.json");
     ostringstream tmp;
     tmp<<infile.rdbuf();
     infile.close();
@@ -99,8 +108,6 @@ void System::ShowAllAirlineToUser()
     mAirlineGraph->ShowAllAirlineToUser();
 }
 
-
-
 void System::ShowAirlineByAirport(int no)
 {
     mAirlineGraph->ShowAirlineByAirport(no);
@@ -113,7 +120,7 @@ void System::ShowAirlineByCity(string city)
     mAirlineGraph->ShowAirlineByCity(city);
 }
 
-void System::SearchAirline(string name)
+void System::SearchAirlineByName(string name)
 {
     vector<Airline*>* vec=mAirlineGraph->FindAirlineByName(name);
     if(vec->size()==0)
@@ -122,7 +129,7 @@ void System::SearchAirline(string name)
     }
     else
     {
-        cout<<endl<<"========================================================================================================================================================================"<<endl;
+        cout<<endl<<"==========================================="<<endl;
         cout<<"共有"<<vec->size()<<"个结果:"<<endl;
         for(vector<Airline*>::iterator it=vec->begin();it!=vec->end();it++)
         {
@@ -151,10 +158,6 @@ void System::SearchAirline(string name)
 
 void System::Book()
 {
-    /*cout<<jsonArray.json();
-    outfile<<jsonArray.json();
-    outfile.close();*/
-
     string name;
     cout<<endl<<"请输入航班号："<<endl;
     cin>>name;
@@ -217,7 +220,7 @@ void System::Book()
 
         cout<<"==========================================="<<endl;
         cout<<endl;
-        cout<<"================ 预定成功 ================="<<endl;
+        cout<<"================ 预订成功 ================="<<endl;
         cout<<endl;
         cout<<setw(12)<<"姓名:"<<s1<<endl;
         cout<<setw(12)<<"证件号:"<<s2<<endl;
@@ -236,10 +239,10 @@ void System::Book()
 
         Array bookArray=GenerateBookJson();
         bookArray<<jsonObj;
-        cout<<bookArray.json();
+        //cout<<bookArray.json();
 
         ofstream outfile;
-        outfile.open("Book.json");
+        outfile.open("data/Book.json");
 
         outfile<<bookArray.json();
         outfile.close();
@@ -276,7 +279,7 @@ void System::Book()
             cout<<"==========================================="<<endl;
         }
 
-        cout<<"你是想预定？（请输入数字）"<<endl;
+        cout<<"你是想预订？（请输入数字）"<<endl;
         int i;
         cin>>i;
         while(i>vec->size()||i<=0)
@@ -313,7 +316,7 @@ void System::Book()
 
         cout<<"==========================================="<<endl;
         cout<<endl;
-        cout<<"================ 预定成功 ================="<<endl;
+        cout<<"================ 预订成功 ================="<<endl;
         cout<<endl;
         cout<<setw(12)<<"姓名:"<<s1<<endl;
         cout<<setw(12)<<"证件号:"<<s2<<endl;
@@ -332,10 +335,10 @@ void System::Book()
 
         Array bookArray=GenerateBookJson();
         bookArray<<jsonObj;
-        cout<<bookArray.json();
+        //cout<<bookArray.json();
 
         ofstream outfile;
-        outfile.open("Book.json");
+        outfile.open("data/Book.json");
 
         outfile<<bookArray.json();
         outfile.close();
@@ -373,25 +376,6 @@ Array System::GenerateBookJson()
 
         jsonArray<<jsonObj;
     }
-
-    /*mBookOrderVector=new vector<BookOrder*>();
-    for(int i=0;i<BookArray.size();i++)  //保存航线到vector
-    {
-        BookOrder* bookOrder=new BookOrder();
-        bookOrder->mName=BookArray.get<Object>(i).get<String>("姓名");
-        bookOrder->mIdNumber=BookArray.get<Object>(i).get<String>("证件号");
-        bookOrder->mAirlineName=BookArray.get<Object>(i).get<String>("航班号");
-        bookOrder->mCompany=BookArray.get<Object>(i).get<String>("公司");
-        bookOrder->mDepartureAirport=BookArray.get<Object>(i).get<String>("起飞机场");
-        bookOrder->mArrivalAirport=BookArray.get<Object>(i).get<String>("到达机场");
-        bookOrder->mDepartureTime=BookArray.get<Object>(i).get<String>("起飞时间");
-        bookOrder->mArrivalTime=BookArray.get<Object>(i).get<String>("到达时间");
-        bookOrder->mAirplaneModel=BookArray.get<Object>(i).get<String>("机型");
-        bookOrder->mDepartureCity=BookArray.get<Object>(i).get<String>("起始城市");
-        bookOrder->mArrivalCity=BookArray.get<Object>(i).get<String>("到达城市");
-        bookOrder->mPrice=BookArray.get<Object>(i).get<Number>("购买价格");
-        mBookOrderVector->push_back(bookOrder);
-    }*/
     return jsonArray;
 }
 
@@ -458,17 +442,15 @@ void System::Unsubscribe()
     }
 
     Array bookArray=GenerateBookJson();
-    cout<<bookArray.json();
+    //cout<<bookArray.json();
 
     ofstream outfile;
-    outfile.open("Book.json");
+    outfile.open("data/Book.json");
 
     outfile<<bookArray.json();
     outfile.close();
 
     LoadBookOrder();
-
-    ShowBookList();
 }
 
 void System::UnsubscribeByName(string name)
@@ -514,3 +496,208 @@ void System::UnsubscribeByNo(int no)
     mBookOrderVector->erase(it+no-1);
 }
 
+void System::ShowAdvisableRoute(string departureCity,string arrivalCity,string departureTime,string arrivalTime)
+{
+    TimeUtil timeUtil;
+    int dTime=timeUtil.GetTimeStamp(departureTime);
+    int aTime=timeUtil.GetTimeStamp(arrivalTime);
+    vector<Route*>* vec=mAirlineGraph->GetAdvisableRouteWithBFS(departureCity,arrivalCity,dTime,aTime);
+    if(vec->size()==0)
+    {
+        cout<<endl<<"抱歉，无可行航线"<<endl;
+    }else
+    {
+        cout<<endl<<"========================================================================================================================================================================"<<endl;
+        for(vector<Route*>::iterator it=vec->begin(); it!=vec->end(); it++)
+        {
+            cout<<endl;
+            (*it)->ShowRoute();
+        }
+        cout<<endl<<endl<<"========================================================================================================================================================================"<<endl;
+    }
+}
+
+void System::ShowBestAirlineNetwork(string departureCity)
+{
+    vector<int>* vec=mAirlineGraph->GetAirportIdByLocation(departureCity);
+    if(vec->size()==0)
+    {
+        cout<<endl<<"抱歉，该城市暂无可行航线"<<endl;
+    }
+    for(int j=0; j<vec->size(); j++)
+    {
+        cout<<endl<<"========================================================================================================================================================================"<<endl;
+        cout<<endl<<"从【"<<departureCity<<" - "<<mAirlineGraph->mAirportHeadArray[(*vec)[j]]->mAirportName<<"】到："<<endl<<endl;
+        Route** r=mAirlineGraph->Dijkstra((*vec)[j]);   //调用 Dijkstra 算法
+        for(int i=0; i<mAirlineGraph->mAirportNumber; i++)
+        {
+            string outstr="【"+mAirlineGraph->mAirportHeadArray[i]->mLocation+" - "+mAirlineGraph->mAirportHeadArray[i]->mAirportName+"】";
+            if(r[i]!=NULL)
+            {
+                cout<<setw(30)<<outstr;
+                Route* route=r[i];
+                route->SumToatalCost();
+                route->ShowRoute();
+                cout<<endl;
+            }
+            else
+            {
+                cout<<setw(30)<<outstr<<"NULL"<<endl;
+            }
+        }
+    }
+    cout<<endl<<"========================================================================================================================================================================"<<endl;
+
+}
+
+void System::RecommandBestRoute(string departureCity,string arrivalCity)
+{
+
+    vector<int>* dVec=mAirlineGraph->GetAirportIdByLocation(departureCity);
+    vector<int>* aVec=mAirlineGraph->GetAirportIdByLocation(arrivalCity);
+    if(dVec->size()==0||aVec->size()==0)
+    {
+        cout<<endl<<"抱歉，无可行航线"<<endl;
+        return;
+    }
+    Route* routeArray[dVec->size()][aVec->size()];
+    for(int i=0;i<dVec->size();i++)
+    {
+        for(int j=0;j<aVec->size();j++)
+        {
+            Route** r=mAirlineGraph->Dijkstra((*dVec)[i]);   //调用 Dijkstra 算法
+            r[(*aVec)[j]]->SumToatalCost();
+            routeArray[i][j]=r[(*aVec)[j]];
+        }
+    }
+    Route* best=routeArray[0][0];
+    for(int i=0;i<dVec->size();i++)
+    {
+        for(int j=0;j<aVec->size();j++)
+        {
+            if(routeArray[i][j]->mTotalCost<best->mTotalCost)
+            best=routeArray[i][j];
+        }
+    }
+    cout<<endl;
+    best->ShowRoute();
+    cout<<endl;
+}
+
+void System::MenuDaemon()
+{
+    ShowMenu(0);
+
+    int operation=0;
+    cin>>operation;
+
+    while(operation)
+    {
+        int x;
+        string s1,s2,s3,s4;
+        switch(operation)
+        {
+        case 1:
+            InsertAirlineInfo();
+            break;
+        case 2:
+            ShowAllAirlineToUser();
+            break;
+        case 3:
+            ShowMenu(3);
+            cin>>s1;
+            SearchAirlineByName(s1);
+            break;
+        case 4:
+            ShowBookList();
+            break;
+        case 5:
+            Book();
+            break;
+        case 6:
+            Unsubscribe();
+            break;
+        case 7:
+            ShowMenu(1);
+            cin>>x;
+            if(x==1)
+            {
+                ShowMenu(2);
+                cin>>s1>>s2;
+                mAirlineGraph->ShowDACityAirlineByDepartureTime(s1,s2);
+            }else if(x==2)
+            {
+                ShowMenu(2);
+                cin>>s1>>s2;
+                mAirlineGraph->ShowDACityAirlineByDiscountPrice(s1,s2);
+            }
+            break;
+        case 8:
+            ShowMenu(4);
+            cin>>s1>>s2>>s3>>s4;
+            ShowAdvisableRoute(s1,s2,s3,s4);
+            break;
+        case 9:
+            ShowMenu(5);
+            cin>>s1;
+            ShowBestAirlineNetwork(s1);
+            break;
+        case 10:
+            ShowMenu(6);
+            cin>>s1>>s2;
+            RecommandBestRoute(s1,s2);
+            break;
+        }
+        ShowMenu(0);
+        cin>>operation;
+    }
+}
+
+void System::ShowMenu(int i)
+{
+    switch(i)
+    {
+    case 0:
+        cout<<endl
+        <<"1) 录入航线"<<endl
+        <<"2) 浏览全部航线（！！！慎用，4000多条，信息量略大！！！）"<<endl
+        <<"3）航班号查询航线"<<endl
+        <<"4）查看订单情况"<<endl
+        <<"5）订票"<<endl
+        <<"6）退票"<<endl
+        <<"7）查询城间航线"<<endl
+        <<"8）合理线路设计"<<endl
+        <<"9）航线网络"<<endl
+        <<"10）推荐最优线路"<<endl
+        <<endl
+        <<"0）退出"<<endl;
+        break;
+    case 1:
+        cout<<endl
+        <<"请选择排序方式"<<endl
+        <<"1）出发时间"<<endl
+        <<"2）折后票价"<<endl
+        <<"0）退出"<<endl;
+        break;
+    case 2:
+        cout<<endl
+        <<"请输入出发城市和到达城市："<<endl;
+        break;
+    case 3:
+        cout<<endl
+        <<"请输入航班号："<<endl;
+        break;
+    case 4:
+        cout<<endl
+        <<"请输入出发城市、到达城市、出发时间和到达时间："<<endl;
+        break;
+    case 5:
+        cout<<endl
+        <<"请输入出发城市："<<endl;
+        break;
+    case 6:
+        cout<<endl
+        <<"请输入出发城市和到达城市："<<endl;
+        break;
+    }
+}
